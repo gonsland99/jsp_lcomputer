@@ -94,6 +94,5 @@
 			</c:choose>
 		</ul>
 	</div>
-	<a href="/jsp_basic/user-insert.do">회원가입으로..</a>
 </body>
 </html>

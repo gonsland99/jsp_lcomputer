@@ -24,16 +24,19 @@ public class UserDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		ArrayList<User> list = null;
-		int pageNum = (page-1)*3;
+		int pageNum = (page-1)*3;		// 0,3,6,9(페이지갯수)
 		
 		try {
 			conn = DBConnection.getConnection();
 			//String query = "select * from user limit ?,3";
-			String query = new StringBuilder()
+			String query = new StringBuilder()		//가시성 높이기 위해 사용?
+					//@Rownum := Rownum이란 변수에 값을 대입
+					//user ta, tb ,만 사용해서 crossJoin함
 					.append("select		@ROWNUM := @ROWNUM -1 as ROWNUM,\n")
 					.append("			ta.*\n")
 					.append("from		user ta,\n")
 					.append("			(select @rownum := (select COUNT(*)-?+1 from user ta)) tb\n")
+//					.append("order by u_idx desc\n")
 					.append("limit		?,3 \n")
 					.toString();
 			pstmt = conn.prepareStatement(query);
@@ -118,5 +121,75 @@ public class UserDAO {
 			}
 		}
 		return count;
+	}
+	public User loginUser(String idx, String pw) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		User user = null;
+		try {
+			conn = DBConnection.getConnection();
+			String sql = "select * from user where u_id=? and u_pw=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, idx);
+			pstmt.setString(2, pw);
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				user = new User();
+				user.setU_idx(rs.getInt("u_idx"));
+				user.setU_pw(rs.getString("u_pw"));
+				user.setU_id(rs.getString("u_id"));
+				user.setU_name(rs.getString("u_name"));
+			}
+		} catch (Exception ex) {
+			System.out.println("SQLException : "+ex.getMessage());
+		} finally {
+			try {
+				if(pstmt != null) pstmt.close();
+				if(conn != null) conn.close();
+			} catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return user;
+	}
+	public ArrayList<User> getUserDetail(int idx) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		ArrayList<User> dList = null;
+//		System.out.println(idx);
+		try {
+			conn = DBConnection.getConnection();
+			String sql = "select * from user where u_idx=?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, idx);
+			rs = pstmt.executeQuery();
+			dList = new ArrayList<User>();
+			
+			while(rs.next()){
+				User user = new User();
+				user.setU_idx(rs.getInt("u_idx"));
+				user.setU_id(rs.getString("u_id"));
+				user.setU_name(rs.getString("u_name"));
+				user.setU_tel(rs.getString("u_tel"));
+				user.setU_age(rs.getString("u_age"));
+				
+				
+				dList.add(user);
+			}
+//			System.out.println(dList.toString());
+		}catch(Exception e) {
+			e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt != null) pstmt.close();
+				if(conn != null) conn.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return dList;
 	}
 }

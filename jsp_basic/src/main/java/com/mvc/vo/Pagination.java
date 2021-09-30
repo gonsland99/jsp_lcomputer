@@ -16,8 +16,11 @@ public class Pagination {
 //	UserService userService = null;
 	public Pagination() {
 	}
-	public Pagination(int page) {
+	public Pagination(int page, int count) {
 		this.page = page;
+		this.count = count;
+		//테이블내 객체를 생성해서 사용하면 페이징 기능 재사용성이 떨어짐(코드수정 필요해짐)
+		//그래서 외부에서 UsersCount값을 받아와 사용하는게 유리
 //		userService = UserService.getInstance();
 //		count = userService.getUsersCount();
 		startPage = ((page-1)/pageUnit)*pageUnit +1;
@@ -26,10 +29,8 @@ public class Pagination {
 		endPage = endPage < lastPage ? endPage : lastPage;
 		prevPage = (endPage-pageUnit);
 		nextPage = (startPage+pageUnit);
-		System.out.println(this.page);
-		System.out.println(startPage);
-		System.out.println(lastPage);
-		System.out.println(endPage);
+//		System.out.println(this.page);
+//		System.out.println(endPage);
 	}
 	public int getCount() {
 		return count;
