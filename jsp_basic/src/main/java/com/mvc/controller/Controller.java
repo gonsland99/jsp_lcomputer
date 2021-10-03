@@ -1,6 +1,7 @@
 package com.mvc.controller;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
@@ -45,7 +46,6 @@ public class Controller extends HttpServlet{
 		case "/user-list.do":
 			//reqPage를 외부에서도 사용하려면 외부에 변수를 생성후 사용하는게 좋음
 			reqPage = request.getParameter("page");	//page값이란게 user-list.do?page=${pagination.prevPage }?
-			System.out.println(reqPage);			
 			if(reqPage != null) {
 				page = Integer.parseInt(reqPage);
 			}
